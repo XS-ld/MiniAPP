@@ -1,52 +1,38 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <script src='//libtl.com/sdk.js' data-zone='10729886' data-sdk='show_10729886'></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>我的资源站</title>
     <style>
-        /* 白底黑字极简风格 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
         body {
             background-color: #FFFFFF;
             color: #000000;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             padding: 20px;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
-        
         .container {
             max-width: 600px;
             margin: 0 auto;
-            width: 100%;
-            flex: 1;
         }
-        
         h1 {
             font-size: 28px;
             font-weight: 600;
             margin-bottom: 20px;
-            color: #000000;
         }
-        
         h2 {
             font-size: 20px;
             font-weight: 500;
             margin: 25px 0 15px 0;
-            color: #000000;
-            border-bottom: 1px solid #EEEEEE;
+            border-bottom: 1px solid #eee;
             padding-bottom: 8px;
         }
-        
-        /* 按钮样式：白底黑边黑字 */
         .button {
             display: inline-block;
             background-color: #FFFFFF;
@@ -60,71 +46,46 @@
             cursor: pointer;
             width: 100%;
             margin-bottom: 15px;
-            transition: background-color 0.2s, color 0.2s;
         }
-        
         .button:active {
             background-color: #000000;
             color: #FFFFFF;
         }
-        
         .button.small {
             padding: 8px 16px;
             font-size: 14px;
             width: auto;
             margin-right: 10px;
         }
-        
-        /* 文件列表样式 */
-        .file-list {
-            list-style: none;
-            margin-top: 15px;
-        }
-        
-        .file-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #EEEEEE;
-        }
-        
-        .file-info {
-            flex: 2;
-            overflow: hidden;
-        }
-        
-        .file-name {
-            font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .file-size {
-            font-size: 12px;
-            color: #666666;
-            margin-top: 4px;
-        }
-        
-        .file-actions {
-            display: flex;
-            gap: 8px;
-        }
-        
-        /* 上传区域样式 */
         .upload-area {
-            border: 2px dashed #CCCCCC;
+            border: 2px dashed #ccc;
             border-radius: 8px;
             padding: 30px 20px;
             text-align: center;
             margin: 20px 0;
         }
-        
-        .upload-input {
-            display: none;
+        .file-list {
+            list-style: none;
+            margin-top: 15px;
         }
-        
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .file-name {
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px;
+        }
+        .file-size {
+            font-size: 12px;
+            color: #666;
+        }
         .status-message {
             margin: 15px 0;
             padding: 10px;
@@ -133,304 +94,165 @@
             font-size: 14px;
             display: none;
         }
-        
         .status-message.success {
-            background-color: #F0F0F0;
-            color: #000000;
+            background-color: #f0f0f0;
+            color: #000;
+            border: 1px solid #000;
             display: block;
-            border: 1px solid #000000;
         }
-        
         .status-message.error {
-            background-color: #F0F0F0;
-            color: #FF0000;
+            background-color: #f0f0f0;
+            color: red;
+            border: 1px solid red;
             display: block;
-            border: 1px solid #FF0000;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📁 资源站</h1>
-        
-        <!-- 状态提示区域 -->
-        <div id="statusMessage" class="status-message"></div>
-        
-        <!-- 上传区域 -->
-        <h2>上传资源</h2>
-        <div class="upload-area" id="uploadArea">
-            <p style="margin-bottom: 15px;">点击选择文件上传</p>
-            <input type="file" id="fileInput" class="upload-input">
-            <button class="button" id="selectFileBtn">选择文件</button>
-        </div>
-        
-        <!-- 文件列表区域 -->
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h2>资源列表</h2>
-            <button class="button small" id="refreshBtn">↻ 刷新</button>
-        </div>
-        
-        <!-- 文件列表容器 -->
-        <div id="fileListContainer">
-            <p style="text-align: center; color: #999; padding: 30px 0;">暂无文件，请上传</p>
-        </div>
+<div class="container">
+    <h1>📁 资源站</h1>
+    <div id="statusMessage" class="status-message"></div>
+    <h2>上传资源</h2>
+    <div class="upload-area" id="uploadArea">
+        <p style="margin-bottom: 15px;">点击选择文件上传</p>
+        <input type="file" id="fileInput" style="display:none">
+        <button class="button" id="selectFileBtn">选择文件</button>
     </div>
-
-    <!-- 引入 Telegram Web App SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
-    <script>
-    // 资源站 Mini App 完整功能代码
-    
-    // ==================== 初始化 Telegram WebApp ====================
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2>资源列表</h2>
+        <button class="button small" id="refreshBtn">↻ 刷新</button>
+    </div>
+    <div id="fileListContainer">
+        <p style="text-align:center; color:#999; padding:30px 0;">暂无文件，请上传</p>
+    </div>
+</div>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
     const tg = window.Telegram.WebApp;
-    
-    // 通知 Telegram 应用，Mini App 已准备就绪
     tg.ready();
-    
-    // 扩展整个视图，让 Mini App 全屏显示
     tg.expand();
-    
-    // ==================== 获取页面元素 ====================
-    const statusMessage = document.getElementById('statusMessage');
-    const uploadArea = document.getElementById('uploadArea');
+
+    const statusDiv = document.getElementById('statusMessage');
     const fileInput = document.getElementById('fileInput');
-    const selectFileBtn = document.getElementById('selectFileBtn');
+    const selectBtn = document.getElementById('selectFileBtn');
     const refreshBtn = document.getElementById('refreshBtn');
-    const fileListContainer = document.getElementById('fileListContainer');
-    
-    // ==================== 全局变量 ====================
-    // 注意：这是一个演示版本，使用浏览器本地存储模拟文件存储
-    // 后续我们会接入真正的后端存储服务（如 Pinata）
-    let fileDatabase = [];
-    
-    // ==================== 工具函数：显示状态消息 ====================
-    function showStatus(message, type = 'success') {
-        statusMessage.textContent = message;
-        statusMessage.className = 'status-message ' + type;
-        
-        // 3秒后自动隐藏
-        setTimeout(() => {
-            statusMessage.style.display = 'none';
-        }, 3000);
-    }
-    
-    // ==================== 工具函数：格式化文件大小 ====================
-    function formatFileSize(bytes) {
-        if (bytes === 0) return '0 B';
-        const k = 1024;
-        const sizes = ['B', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    }
-    
-    // ==================== 从本地存储加载文件列表 ====================
-    function loadFilesFromStorage() {
+    const fileListDiv = document.getElementById('fileListContainer');
+
+    let filesDB = [];
+
+    function loadFromStorage() {
         const stored = localStorage.getItem('resource_files');
-        if (stored) {
-            try {
-                fileDatabase = JSON.parse(stored);
-            } catch (e) {
-                console.error('解析存储数据失败', e);
-                fileDatabase = [];
-            }
-        } else {
-            fileDatabase = [];
-        }
+        if(stored) {
+            try { filesDB = JSON.parse(stored); } catch(e){ filesDB = []; }
+        } else { filesDB = []; }
     }
-    
-    // ==================== 保存文件列表到本地存储 ====================
-    function saveFilesToStorage() {
-        localStorage.setItem('resource_files', JSON.stringify(fileDatabase));
+    function saveToStorage() {
+        localStorage.setItem('resource_files', JSON.stringify(filesDB));
     }
-    
-    // ==================== 渲染文件列表 ====================
-    function renderFileList() {
-        loadFilesFromStorage();
-        
-        if (fileDatabase.length === 0) {
-            fileListContainer.innerHTML = '<p style="text-align: center; color: #999; padding: 30px 0;">暂无文件，请上传</p>';
+    function formatSize(bytes) {
+        if(bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B','KB','MB','GB'];
+        const i = Math.floor(Math.log(bytes)/Math.log(k));
+        return parseFloat((bytes/Math.pow(k,i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    function showStatus(msg, type) {
+        statusDiv.textContent = msg;
+        statusDiv.className = 'status-message ' + type;
+        setTimeout(() => { statusDiv.style.display = 'none'; }, 3000);
+    }
+    function renderList() {
+        loadFromStorage();
+        if(filesDB.length === 0) {
+            fileListDiv.innerHTML = '<p style="text-align:center; color:#999; padding:30px 0;">暂无文件，请上传</p>';
             return;
         }
-        
         let html = '<ul class="file-list">';
-        
-        // 按上传时间倒序排列（最新的在前面）
-        const sortedFiles = [...fileDatabase].sort((a, b) => b.timestamp - a.timestamp);
-        
-        sortedFiles.forEach(file => {
+        const sorted = [...filesDB].sort((a,b)=>b.timestamp - a.timestamp);
+        for(let f of sorted) {
             html += `
                 <li class="file-item">
-                    <div class="file-info">
-                        <div class="file-name">${file.name}</div>
-                        <div class="file-size">${formatFileSize(file.size)}</div>
+                    <div>
+                        <div class="file-name">${escapeHtml(f.name)}</div>
+                        <div class="file-size">${formatSize(f.size)}</div>
                     </div>
-                    <div class="file-actions">
-                        <button class="button small download-btn" data-id="${file.id}">下载</button>
-                        <button class="button small delete-btn" data-id="${file.id}" style="border-color: #FF0000; color: #FF0000;">删除</button>
+                    <div>
+                        <button class="button small" data-id="${f.id}" data-action="download">下载</button>
+                        <button class="button small" data-id="${f.id}" data-action="delete" style="border-color:red; color:red;">删除</button>
                     </div>
                 </li>
             `;
-        });
-        
+        }
         html += '</ul>';
-        fileListContainer.innerHTML = html;
-        
-        // 为所有下载按钮添加事件监听
-        document.querySelectorAll('.download-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                const fileId = this.getAttribute('data-id');
-                downloadFile(fileId);
-            });
+        fileListDiv.innerHTML = html;
+        document.querySelectorAll('[data-action="download"]').forEach(btn => {
+            btn.addEventListener('click', (e) => { downloadFile(btn.getAttribute('data-id')); });
         });
-        
-        // 为所有删除按钮添加事件监听
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                const fileId = this.getAttribute('data-id');
-                deleteFile(fileId);
-            });
+        document.querySelectorAll('[data-action="delete"]').forEach(btn => {
+            btn.addEventListener('click', (e) => { deleteFile(btn.getAttribute('data-id')); });
         });
     }
-    
-    // ==================== 上传文件功能 ====================
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if(m === '&') return '&amp;';
+            if(m === '<') return '&lt;';
+            if(m === '>') return '&gt;';
+            return m;
+        });
+    }
     function uploadFile(file) {
-        if (!file) return;
-        
-        // 显示上传中状态
+        if(!file) return;
         showStatus('上传中...', 'success');
-        
-        // 创建一个 FileReader 来读取文件内容（用于演示）
         const reader = new FileReader();
-        
         reader.onload = function(e) {
-            // 生成一个唯一的文件ID
-            const fileId = 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            
-            // 创建文件记录
-            const fileRecord = {
+            const fileId = Date.now() + '_' + Math.random().toString(36).substr(2, 8);
+            const record = {
                 id: fileId,
                 name: file.name,
                 size: file.size,
                 type: file.type,
                 timestamp: Date.now(),
-                // 注意：这里只存储了文件的DataURL用于演示
-                // 实际应用中应该上传到真正的服务器
                 dataUrl: e.target.result
             };
-            
-            // 加载现有文件列表
-            loadFilesFromStorage();
-            
-            // 添加到数据库
-            fileDatabase.push(fileRecord);
-            
-            // 保存到本地存储
-            saveFilesToStorage();
-            
-            // 重新渲染列表
-            renderFileList();
-            
-            // 显示成功消息
-            showStatus('文件上传成功！', 'success');
-            
-            // 清空文件输入
+            loadFromStorage();
+            filesDB.push(record);
+            saveToStorage();
+            renderList();
+            showStatus('上传成功', 'success');
             fileInput.value = '';
         };
-        
-        reader.onerror = function() {
-            showStatus('文件读取失败', 'error');
-        };
-        
-        // 以 DataURL 格式读取文件（适用于小文件演示）
+        reader.onerror = () => showStatus('读取文件失败', 'error');
         reader.readAsDataURL(file);
     }
-    
-    // ==================== 下载文件功能 ====================
-    function downloadFile(fileId) {
-        loadFilesFromStorage();
-        
-        const file = fileDatabase.find(f => f.id === fileId);
-        
-        if (!file) {
-            showStatus('文件不存在', 'error');
-            return;
-        }
-        
-        try {
-            // 从 dataUrl 创建下载链接
-            const link = document.createElement('a');
-            link.href = file.dataUrl;
-            link.download = file.name;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showStatus('下载已开始', 'success');
-        } catch (e) {
-            console.error('下载失败', e);
-            showStatus('下载失败', 'error');
-        }
+    function downloadFile(id) {
+        loadFromStorage();
+        const file = filesDB.find(f => f.id === id);
+        if(!file) { showStatus('文件不存在', 'error'); return; }
+        const a = document.createElement('a');
+        a.href = file.dataUrl;
+        a.download = file.name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showStatus('下载已开始', 'success');
     }
-    
-    // ==================== 删除文件功能 ====================
-    function deleteFile(fileId) {
-        if (!confirm('确定要删除这个文件吗？')) {
-            return;
-        }
-        
-        loadFilesFromStorage();
-        
-        const index = fileDatabase.findIndex(f => f.id === fileId);
-        
-        if (index !== -1) {
-            fileDatabase.splice(index, 1);
-            saveFilesToStorage();
-            renderFileList();
-            showStatus('文件已删除', 'success');
+    function deleteFile(id) {
+        if(!confirm('确定删除吗？')) return;
+        loadFromStorage();
+        const idx = filesDB.findIndex(f => f.id === id);
+        if(idx !== -1) {
+            filesDB.splice(idx,1);
+            saveToStorage();
+            renderList();
+            showStatus('已删除', 'success');
         } else {
             showStatus('文件不存在', 'error');
         }
     }
-    
-    // ==================== 事件监听器设置 ====================
-    
-    // 选择文件按钮点击事件
-    selectFileBtn.addEventListener('click', function() {
-        fileInput.click();
-    });
-    
-    // 文件输入变化事件（用户选择了文件）
-    fileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            uploadFile(file);
-        }
-    });
-    
-    // 拖拽上传区域点击事件（点击上传区域也能选择文件）
-    uploadArea.addEventListener('click', function() {
-        fileInput.click();
-    });
-    
-    // 刷新按钮点击事件
-    refreshBtn.addEventListener('click', function() {
-        renderFileList();
-        showStatus('列表已刷新', 'success');
-    });
-    
-    // ==================== 初始化加载 ====================
-    renderFileList();
-    
-    // 可选：设置主按钮（Telegram 界面底部按钮）
-    tg.MainButton.setText('关闭');
-    tg.MainButton.onClick(function() {
-        tg.close();
-    });
-    
-    console.log('资源站 Mini App 已启动，Telegram 主题：', tg.themeParams);
+    selectBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => { if(e.target.files[0]) uploadFile(e.target.files[0]); });
+    refreshBtn.addEventListener('click', () => { renderList(); showStatus('刷新成功', 'success'); });
+    renderList();
 </script>
-
-
 </body>
 </html>
